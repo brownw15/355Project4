@@ -19,7 +19,7 @@ module.exports = dbConn;
 /*
 CREATE TABLE USER_ACCOUNT
 (
-    id INT AUTO_INCREMENT PRIMARY KEY,
+    acc_id INT AUTO_INCREMENT PRIMARY KEY,
     FirstName VARCHAR(30),
     LastName VARCHAR(30),
     Phone VARCHAR(10),
