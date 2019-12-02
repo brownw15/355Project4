@@ -9,11 +9,14 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({
     extended: true
 }));
+app.use('/public', express.static('public'));
+
 dbConn.connect();
 
 app.get('/', function (req, res) {
     res.write("<html>");
     res.write("<body>");
+    res.write("<head><link rel='stylesheet' type='text/html' href='style.css'/></head>");
     res.write("<div>");
     res.write("<form action='/saveUser' method='post'>");
     res.write("<h2> Create New User</h2>");
@@ -40,7 +43,7 @@ app.get('/', function (req, res) {
     res.write("<form action='/updateUser' method='post'>");
     res.write("<h2> Update User info</h2>");
     res.write("<input type='text' name= 'acc_id' placeholder='user ID'/>");
-    res.write("<input type='text' name='FirstName' placeholder='First/>");
+    res.write("<input type='text' name='FirstName' />");
     res.write("<input type='text' name='LastName' placeholder='Last'/>");
     res.write("<button type='submit' class='btn btn-primary'>Save Update</button>")
     res.write("</form>");
@@ -86,8 +89,8 @@ app.get('/users', function (req, res) {
 });
 
 //Show user info
-app.get('/showValues', function (req, res) {
-    let showValues = req.body.option1;
+/*app.get('/showValues', function (req, res) {
+    let showValues = req.params.option1;
     console.log(showValues);
 
     if(showValues== 1){
@@ -110,7 +113,7 @@ app.get('/showValues', function (req, res) {
             return res.send({ error: false, data: results, message: 'users list.' });
         });
 });
- 
+ */
 //Retrieve user with id 
 app.get('/users/:acc_email',(req, res)=> {
     let acc_email = req.params.acc_email;
@@ -136,12 +139,15 @@ app.post('/saveUser', (req, res)=> {
  
  
 //  Update user with id
-app.put('/updateUser/:acc_id', (req, res) => {
-    let newF= req.body.firstName;
-    let newL= req.body.lastName;
-    let user_id = req.params.acc_id;
-    let sql = 'UPDATE USER_ACCOUNT SET FirstName =' + 'dbConn.escape(newF)'+ ', LastName ='+ 'dbConn.escape(newL)' + 'WHERE acc_id =' + dbConn.escape(user_id);
-    let query = dbConn.query(sql, (err, results) => {
+app.post('/updateUser', (req, res) => {
+    let user_id = req.body.acc_id;
+    let first = req.body.FirstName;
+    let last = req.body.LastName;
+    console.log(first);
+    let data = {acc_id: user_id, FirstName: first, LastName: last};
+    let sql = 'UPDATE USER_ACCOUNT SET ? WHERE acc_id ='+ dbConn.escape(user_id); 
+    let query = dbConn.query(sql,data,(err, results) => {
+        console.log(user_id);
         if(err) throw err;
         res.redirect('/');
     });
